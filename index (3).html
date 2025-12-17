@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pelajaran Bahasa Jepang - Menunjukkan Letak Benda</title>
+  <style>
+    :root{
+      --primary: #FF6B6B;
+      --secondary: #4ECDC4;
+      --accent: #FFE66D;
+      --bg: #2C3E50;
+      --card: #34495E;
+      --muted: #ffffff;
+      --text: #ECF0F1;
+      --success: #2ECC71;
+      --error: #E74C3C;
+      --glass: rgba(255,255,255,0.1);
+      --gradient1: #FF6B6B;
+      --gradient2: #4ECDC4;
+    }
+    *{box-sizing:border-box}
+    html,body{
+      min-height: 100%;
+  margin: 0;
+  font-family: Inter, system-ui, Segoe UI, Roboto, 'Noto Sans', sans-serif;
+
+  background-color: #1a252f;
+  background-image:
+    radial-gradient(
+      1400px 900px at 15% 10%,
+      rgba(78,205,196,0.12) 0%,
+      rgba(78,205,196,0.06) 35%,
+      transparent 65%
+    ),
+    radial-gradient(
+      1200px 800px at 85% 90%,
+      rgba(255,107,107,0.10) 0%,
+      rgba(255,107,107,0.05) 40%,
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      var(--bg) 0%,
+      #243445 50%,
+      #1a252f 100%
+    );
+
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+    }
+    .wrap{max-width:1100px;margin:32px auto;padding:20px}
+    header{display:flex;align-items:center;gap:14px;padding:14px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+    header img{border-radius:8px}
+    header h1{font-size:18px;margin:0}
+    nav{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+    .nav{
+      background:transparent;
+      border:2px solid transparent;
+      padding:10px 16px;
+      border-radius:12px;
+      color:var(--muted);
+      cursor:pointer;
+      transition:all 0.3s ease;
+      font-weight:500;
+    }
+    .nav:hover {
+      color: var(--text);
+      background: rgba(255,255,255,0.05);
+    }
+    .nav.active{
+      background:linear-gradient(135deg, var(--primary), var(--secondary));
+      color:var(--text);
+      border:none;
+      box-shadow:0 4px 15px rgba(0,0,0,0.2);
+    }
+    main{margin-top:18px}
+    .card{
+      background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      padding: 16px;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.05);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .grid{display:grid;grid-template-columns:1fr 340px;gap:18px}
+    table{width:100%;border-collapse:collapse;font-size:14px}
+    th,td{
+      padding:12px 16px;
+      text-align:left;
+      border-bottom:1px solid rgba(255,255,255,0.1)
+    }
+    th{
+      color:var(--accent);
+      font-weight:600;
+      letter-spacing:0.5px;
+    }
+    .small{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+    /* Flashcard visuals */
+    .flash-wrap{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+    .flashcard{
+      width:100%;
+      max-width:520px;
+      height:180px;
+      perspective:1200px;
+      cursor: pointer;
+    }
+    .card-inner{
+      position:relative;
+      width:100%;
+      height:100%;
+      transform-style:preserve-3d;
+      transition:transform 0.6s;
+      border-radius:10px;
+      box-shadow:0 8px 30px rgba(2,6,23,0.6);
+    }
+    .card-inner.flipped{
+      transform:rotateY(180deg);
+    }
+    .card-face{
+      position:absolute;
+      width:100%;
+      height:100%;
+      -webkit-backface-visibility:hidden;
+      backface-visibility:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:30px;
+      background:linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius:16px;
+      box-shadow:0 4px 12px rgba(2,6,23,0.3);
+      color:var(--text);
+    }
+    .card-face.front{
+      transform:rotateY(0deg);
+      z-index:2;
+    }
+    .card-face.back{
+      transform:rotateY(180deg);
+      padding:12px;
+      text-align:center;
+      font-size:16px;
+    }
+    .controls{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+    .btn{
+      padding:10px 18px;
+      border-radius:12px;
+      border:none;
+      cursor:pointer;
+      transition:all 0.3s ease;
+      font-weight:500;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow:0 4px 15px rgba(0,0,0,0.2);
+    }
+    .btn.ghost{
+      background:rgba(255,255,255,0.05);
+      border:2px solid rgba(255,255,255,0.1);
+      color:var(--text);
+    }
+    .btn.ghost:hover {
+      background:rgba(255,255,255,0.1);
+    }
+    .btn.primary{
+      background:linear-gradient(135deg, var(--primary), var(--secondary));
+      color:var(--text);
+      font-weight:600;
+    }
+    .vocab-list{max-height:360px;overflow:auto;padding-right:8px}
+    .mcq .option{
+      display:block;
+      padding:12px 16px;
+      border-radius:12px;
+      border:2px solid rgba(255,255,255,0.1);
+      margin-bottom:10px;
+      cursor:pointer;
+      background:rgba(255,255,255,0.05);
+      transition:all 0.3s ease;
+    }
+    .mcq .option:hover {
+      background:rgba(255,255,255,0.1);
+      transform:translateX(5px);
+    }
+    .option.correct{
+      border-color:var(--success);
+      background:linear-gradient(90deg,rgba(46,204,113,0.2),rgba(46,204,113,0.05));
+    }
+    .option.wrong{
+      border-color:var(--error);
+      background:linear-gradient(90deg,rgba(231,76,60,0.2),rgba(231,76,60,0.05));
+    }
+    .option.selected{
+      box-shadow:0 6px 18px rgba(0,0,0,0.2);
+      border-color:var(--accent);
+      background:linear-gradient(90deg,rgba(255,230,109,0.2),rgba(255,230,109,0.05));
+    }
+    footer{text-align:center;padding:18px;color:var(--muted);font-size:13px;margin-top:18px}
+    @media (max-width:920px){.grid{grid-template-columns:1fr}.flashcard{max-width:100%}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='44' height='44'><rect rx='10' width='44' height='44' fill='%2360a5fa'/><text x='50%' y='58%' font-size='18' text-anchor='middle' fill='white' font-family='Arial'>JP</text></svg>" alt="logo" width="44" height="44">
+      <h1>Menunjukkan Letak Benda (Jepang Dasar)</h1>
+      <nav id="mainnav" aria-label="Main navigation">
+        <button class="nav active" data-target="home">Beranda</button>
+        <button class="nav" data-target="materi">Materi</button>
+        <button class="nav" data-target="flashcard">Flashcard</button>
+        <button class="nav" data-target="latihan">Soal Latihan</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="home" class="card view">
+        <h2>Selamat datang!</h2>
+        <p class="small">Halaman pembelajaran singkat: "Menunjukkan Letak Suatu Benda". Gunakan menu untuk membaca materi, berlatih lewat flashcard, dan mengerjakan soal.</p>
+        <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap">
+          <div class="card" style="flex:1;min-width:240px">
+            <h3>Isi Materi</h3>
+            <ul class="small">
+              <li>Kata tunjuk: これ・それ・あれ</li>
+              <li>Kata tunjuk-sifat: この・その・あの</li>
+              <li>Partikel kepemilikan: の</li>
+              <li>Pola: ～は ～です / ～は ～ですか</li>
+            </ul>
+          </div>
+          <div class="card" style="width:320px">
+            <h3>Petunjuk</h3>
+            <ol class="small" style="padding-left:16px">
+              <li>Kunjungi Materi untuk penjelasan dan contoh.</li>
+              <li>Gunakan Flashcard untuk hafalan.</li>
+              <li>Kerjakan Soal Latihan untuk evaluasi.</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section id="materi" class="card view" style="display:none;margin-top:16px">
+        <h2>Materi: Menunjukkan Letak Suatu Benda</h2>
+        <p class="small">Ringkasan kosakata, tata bahasa, contoh kalimat, dan LKS singkat.</p>
+
+        <div class="grid" style="margin-top:12px">
+          <div>
+            <div class="card">
+              <h3>Kosakata Dasar</h3>
+              <table>
+                <thead><tr><th>Romaji</th><th>Hiragana</th><th>Arti</th><th>Keterangan</th></tr></thead>
+                <tbody>
+                  <tr><td>kore</td><td>これ</td><td>Ini</td><td>dekat pembicara</td></tr>
+                  <tr><td>sore</td><td>それ</td><td>Itu</td><td>dekat lawan bicara</td></tr>
+                  <tr><td>are</td><td>あれ</td><td>Itu (di sana)</td><td>jauh dari keduanya</td></tr>
+                  <tr><td>kono</td><td>この</td><td>... ini</td><td>mengikuti kata benda</td></tr>
+                  <tr><td>sono</td><td>その</td><td>... itu</td><td>mengikuti kata benda</td></tr>
+                  <tr><td>ano</td><td>あの</td><td>... itu (di sana)</td><td>mengikuti kata benda</td></tr>
+                  <tr><td>hon</td><td>ほん</td><td>buku</td><td>kata benda</td></tr>
+                  <tr><td>pen</td><td>ぺん</td><td>pulpen</td><td>kata benda</td></tr>
+                  <tr><td>kaban</td><td>かばん</td><td>tas</td><td>kata benda</td></tr>
+                  <tr><td>tsukue</td><td>つくえ</td><td>meja</td><td>kata benda</td></tr>
+                  <tr><td>isu</td><td>いす</td><td>kursi</td><td>kata benda</td></tr>
+                  <tr><td>watashi</td><td>わたし</td><td>saya</td><td>kata ganti</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="card" style="margin-top:12px">
+              <h3>Tata Bahasa (Ringkas)</h3>
+              <p class="small">Kalimat pernyataan:</p>
+              <pre style="background:rgba(255,255,255,0.02);padding:10px;border-radius:8px">Kore/Sore/Are は KataBenda です。</pre>
+              <p class="small">Contoh: これは ほん です。 (Kore wa hon desu.)</p>
+              <p class="small">Kepemilikan (の): わたし の かばん — Tas milik saya</p>
+            </div>
+          </div>
+
+          <aside>
+            <div class="card">
+              <h3>Contoh Percakapan</h3>
+              <p class="small"><strong>A:</strong> これは なん ですか。<br><strong>B:</strong> それは ぺん です。</p>
+              <p class="small"><strong>A:</strong> それは だれ の ほん ですか。<br><strong>B:</strong> わたし の です。</p>
+              <p class="small"><strong>A:</strong> この ペンは あなたの ですか。<br><strong>B:</strong> いいえ、その ペンは ともだちの です。</p>
+              <p class="small"><strong>A:</strong> これは だれの ノート ですか。<br><strong>B:</strong> それは わたしの ノート です。</p>
+            </div>
+
+            <div class="card" style="margin-top:12px">
+              <h3>Tips</h3>
+              <ul class="small">
+                <li>Latih sambil menunjuk benda nyata.</li>
+                <li>Ulangi menggunakan flashcard.</li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+
+      </section>
+
+      <section id="flashcard" class="card view" style="display:none;margin-top:16px">
+        <h2>Flashcard Kosakata</h2>
+        <p class="small">Klik kartu atau gunakan spasi untuk membalik. Gunakan tombol untuk navigasi. Tersedia shuffle dan suara.</p>
+
+        <div class="flash-wrap" style="margin-top:12px">
+          <div style="flex:1;min-width:320px">
+            <div class="flashcard" aria-hidden="false">
+              <div id="cardInner" class="card-inner" role="button" tabindex="0" aria-label="Flashcard">
+                <div class="card-face front" id="cardFront">これ</div>
+                <div class="card-face back" id="cardBack">kore — Ini</div>
+              </div>
+            </div>
+
+            <div class="controls">
+              <button class="btn ghost" id="prev">⟨ Prev</button>
+              <button class="btn primary" id="flip">Flip</button>
+              <button class="btn ghost" id="next">Next ⟩</button>
+              <button class="btn ghost" id="shuffle">Shuffle</button>
+              <button class="btn ghost" id="speak">🔈 Speak</button>
+            </div>
+            <p class="small" style="margin-top:10px">Progress: <span id="progress">1/12</span></p>
+          </div>
+
+          <div style="width:320px">
+            <div class="card">
+              <h3>Daftar Kosakata</h3>
+              <div id="vocabList" class="vocab-list small"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="latihan" class="card view" style="display:none;margin-top:16px">
+        <h2>Soal Latihan</h2>
+        <p class="small">Soal pilihan ganda untuk menguji pemahaman.</p>
+
+        <div class="card" style="margin-top:12px">
+          <h3>Soal Pilihan Ganda</h3>
+          <div id="mcq-area"></div>
+          <div style="margin-top:10px">
+            <button class="btn primary" id="checkAll">Periksa Semua Jawaban</button>
+            <button class="btn ghost" id="resetMcq">Ulangi</button>
+          </div>
+          <div id="mcq-result" style="margin-top:10px;color:var(--muted)"></div>
+        </div>
+
+
+      </section>
+    </main>
+
+    <footer>
+      <small>Made for belajar JLPT dasar • Materi: Menunjukkan Letak Suatu Benda</small>
+    </footer>
+  </div>
+
+  <script>
+    const vocab = [
+      {j: 'これ', r:'kore'},
+      {j: 'それ', r:'sore'},
+      {j: 'あれ', r:'are'},
+      {j: 'この', r:'kono'},
+      {j: 'その', r:'sono'},
+      {j: 'あの', r:'ano'},
+      {j: 'ほん', r:'hon'},
+      {j: 'ぺん', r:'pen'},
+      {j: 'かばん', r:'kaban'},
+      {j: 'つくえ', r:'tsukue'},
+      {j: 'いす', r:'isu'},
+      {j: 'わたし', r:'watashi'}
+    ];
+
+    // Navigation
+    const navBtns = document.querySelectorAll('.nav');
+    navBtns.forEach(b=>b.addEventListener('click',()=>{
+      navBtns.forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      const t = b.dataset.target;
+      document.querySelectorAll('.view').forEach(v=>v.style.display='none');
+      document.getElementById(t).style.display='block';
+      location.hash = t;
+    }));
+    // init view
+    if(location.hash){
+      const btn = document.querySelector(`.nav[data-target="${location.hash.replace('#','')}"]`);
+      if(btn) btn.click(); else document.querySelector('.nav').click();
+    } else document.querySelector('.nav').click();
+
+    // Flashcard state
+    let order = vocab.map((_,i)=>i);
+    let idx = 0; let flipped = false;
+    const cardInner = document.getElementById('cardInner');
+    const front = document.getElementById('cardFront');
+    const back = document.getElementById('cardBack');
+    const prog = document.getElementById('progress');
+    const vocabList = document.getElementById('vocabList');
+
+    function renderVocabList(){
+      vocabList.innerHTML = '';
+      order.forEach(i=>{
+        const v = vocab[i];
+        const el = document.createElement('div');
+        el.textContent = `${v.j} — ${v.r}`;
+        el.style.padding = '6px 0'; el.style.borderBottom = '1px dashed rgba(255,255,255,0.02)';
+        vocabList.appendChild(el);
+      });
+    }
+
+    function renderCard(){
+      const v = vocab[order[idx]];
+      front.textContent = v.j;
+      back.textContent = `${v.r}`;
+      prog.textContent = `${idx+1}/${order.length}`;
+    }
+
+    function toggleFlip() {
+      flipped = !flipped;
+      if(flipped) {
+        cardInner.classList.add('flipped');
+      } else {
+        cardInner.classList.remove('flipped');
+      }
+    }
+
+    // Improved event listeners for flipping
+    cardInner.addEventListener('click', (e)=> { 
+      e.preventDefault();
+      toggleFlip();
+    });
+    
+    document.getElementById('flip').addEventListener('click', (e)=> {
+      e.preventDefault();
+      toggleFlip();
+    });
+
+    document.getElementById('prev').addEventListener('click', ()=>{ 
+      idx = (idx - 1 + order.length) % order.length; 
+      flipped = false;
+      cardInner.classList.remove('flipped');
+      renderCard();
+    });
+
+    document.getElementById('next').addEventListener('click', ()=>{ 
+      idx = (idx + 1) % order.length;
+      flipped = false;
+      cardInner.classList.remove('flipped');
+      renderCard();
+    });
+
+    document.getElementById('shuffle').addEventListener('click', ()=>{
+      for(let i=order.length-1;i>0;i--){ 
+        const j=Math.floor(Math.random()*(i+1));
+        [order[i],order[j]]=[order[j],order[i]];
+      }
+      idx=0;
+      flipped=false;
+      cardInner.classList.remove('flipped');
+      renderCard();
+      renderVocabList();
+    });
+
+    // TTS
+    document.getElementById('speak').addEventListener('click', ()=>{
+      const v = vocab[order[idx]];
+      const u = new SpeechSynthesisUtterance(v.j);
+      u.lang = 'ja-JP';
+      speechSynthesis.cancel(); speechSynthesis.speak(u);
+    });
+
+    // keyboard
+    window.addEventListener('keydown', (e)=>{
+      if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+      if(e.key === 'ArrowLeft') document.getElementById('prev').click();
+      if(e.key === 'ArrowRight') document.getElementById('next').click();
+      if(e.key === ' ') { document.getElementById('flip').click(); e.preventDefault(); }
+    });
+
+    renderVocabList(); renderCard();
+
+    // MCQ
+    const mcqs = [
+      {q:'Kata tunjuk "ini" dalam bahasa Jepang adalah', choices:['それ','これ','あれ'], a:1},
+      {q:'Kata tunjuk "itu" (dekat lawan bicara) dalam bahasa Jepang adalah…', choices:['これ','あれ','それ'], a:2},
+      {q:'Kata tunjuk "itu" (jauh dari pembicara dan lawan bicara) adalah…', choices:['あれ','それ','これ'], a:0},
+      {q:'Kata tanya untuk menanyakan "yang mana" adalah…', choices:['なに','どこ','どれ','だれ'], a:2},
+      {q:'"Kata tunjuk benda" dalam bahasa Jepang biasanya diakhiri dengan…', choices:['こ','の','れ','こそ'], a:1},
+      {q:'_____ は だれの かばんですか。（INI TAS SIAPA?)', choices:['これ','それ','あれ'], a:0},
+      {q:'それは わたしの ほん です。Terjemahkan kalimat di atas ke bahasa Indonesia.', choices:['Ini adalah buku saya','Buku saya adalah itu','Itu adalah buku saya.','Buku saya adalah ini'], a:2},
+      {q:'A-San：______ は なんですか。B-San：それは ペンです。', choices:['これ','それ','あれ'], a:0},
+      {q:'やまださん：______ ほんは たなかさんの ですか。たなかさん：はい、そうです。', choices:['この','その','あの'], a:0},
+      {q:'がくせい：______ ひとは せんせいですか。せんせい：いいえ、がくせいです。', choices:['この','その','あの'], a:2}
+    ];
+    const mcqArea = document.getElementById('mcq-area');
+    function renderMCQs(){
+      mcqArea.innerHTML = '';
+      mcqs.forEach((m,mi)=>{
+        const wrap = document.createElement('div'); wrap.className='mcq card'; wrap.style.marginTop='10px';
+        const h = document.createElement('h4'); h.textContent = `${mi+1}. ${m.q}`; wrap.appendChild(h);
+        m.choices.forEach((c,ci)=>{
+          const opt = document.createElement('label'); opt.className='option'; opt.textContent=c; opt.dataset.choice=ci;
+          opt.addEventListener('click', ()=>{ wrap.querySelectorAll('.option').forEach(x=>x.classList.remove('selected')); opt.classList.add('selected'); });
+          wrap.appendChild(opt);
+        });
+        mcqArea.appendChild(wrap);
+      });
+    }
+    renderMCQs();
+
+    document.getElementById('checkAll').addEventListener('click', ()=>{
+      let correct=0;
+      mcqArea.querySelectorAll('.mcq').forEach((card,mi)=>{
+        const sel = card.querySelector('.option.selected');
+        const opts = card.querySelectorAll('.option');
+        opts.forEach(o=>o.classList.remove('correct','wrong'));
+        if(!sel){ opts[mcqs[mi].a].classList.add('correct'); }
+        else {
+          const chosen = Number(sel.dataset.choice);
+          if(chosen === mcqs[mi].a){ sel.classList.add('correct'); correct++; }
+          else { sel.classList.add('wrong'); opts[mcqs[mi].a].classList.add('correct'); }
+        }
+      });
+      document.getElementById('mcq-result').textContent = `Skor: ${correct} / ${mcqs.length}`;
+    });
+    document.getElementById('resetMcq').addEventListener('click', ()=>{ renderMCQs(); document.getElementById('mcq-result').textContent=''; });
+
+
+
+    // keep anchor change behavior
+    window.addEventListener('hashchange', ()=> {
+      const h = location.hash.replace('#','');
+      const btn = document.querySelector(`.nav[data-target="${h}"]`);
+      if(btn) btn.click();
+    });
+  </script>
+</body>
+</html>
